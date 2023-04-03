@@ -142,14 +142,6 @@ def answer_query_with_context(
     return response["choices"][0]["message"]['content'].strip(" \n")
 
 
-
-user_concern = '''
-    Someone yelled at me and cursed afterwards in the street
-'''
-
-pd.read_excel(r'./models/civil_code_data_for_training.xlsx').drop(columns='Unnamed: 0')
-pd.read_excel(r'./models/embeddings_df.xlsx').drop(columns='Unnamed: 0')
-
 class Adlet:
     def __init__(self) -> None:
         self.df = pd.read_excel(r'./models/civil_code_data_for_training.xlsx').drop(columns='Unnamed: 0')
