@@ -18,6 +18,7 @@ from models.keyboards import Keyboard, ParseMode, STATE
 from models.adlet import Adlet
 
 from translator.translator import TranslatorBot
+from storage.storage import FeedbackStorage
 
 KAZ = 'kk'
 RUS = 'ru'
@@ -26,6 +27,7 @@ class AdletEstablisherBot(UserInfo):
     def __init__(self) -> None:
         UserInfo.__init__(self)
         self.adlet = Adlet()
+        self.storage = FeedbackStorage()
         self.__persistence = PicklePersistence(filepath="arbitrarycallbackdatabot")
         self.application = ApplicationBuilder().persistence(self.__persistence).token(TELEGRAM_BOT_TOKEN).concurrent_updates(True).build()
         
@@ -103,6 +105,14 @@ class AdletEstablisherBot(UserInfo):
 
     async def answer(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_info = self.get_user_info(update)
+
+        # this data will be sent to another telegram bot
+        data_for_storage = user_info.copy().update({
+            "question": question,
+            "lang": context.user_data["language"],
+            "bot": "ADLET",
+        })
+        await self.storage.sendKeyValues(data_for_storage)
 
         question = update.message.text
         self.log(user_info, { "command": "answer", "type": "user_input", "question": question})
