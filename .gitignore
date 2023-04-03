@@ -1,1 +1,3 @@
-constants/constants.py
+constants
+models/__pycache__
+translator/__pycache__
