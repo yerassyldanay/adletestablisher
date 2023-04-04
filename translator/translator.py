@@ -57,6 +57,8 @@ class TranslatorBot:
 
             if self.use_proxy:
                 params['de'] = email
+            else:
+                params['de'] = 'mabdina@gmail.com'
 
             if self.use_proxy:
                 async with session.get(
