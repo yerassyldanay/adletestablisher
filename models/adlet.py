@@ -16,7 +16,7 @@ Imagine yourself as a legal advice consultant. If you think user question is not
 
 COMPLETIONS_API_PARAMS = {
     "temperature": 0.5,
-    "max_tokens": 300,
+    "max_tokens": 350,
     "model": COMPLETIONS_MODEL
 }
 
@@ -106,16 +106,15 @@ def construct_prompt(question: str, context_embeddings: dict, df: pd.DataFrame) 
         chosen_sections_indexes.append(str(section_index))
             
     # Useful diagnostic information
-    print(f"Selected {len(chosen_sections)} document sections:")
-    print("\n".join(df['Article'][int(ind)] for ind in chosen_sections_indexes))
+    # print(f"Selected {len(chosen_sections)} document sections:")
+    # print("\n".join(df['Article'][int(ind)] for ind in chosen_sections_indexes))
     
-    sections = "\n".join(df['Article'][int(ind)] for ind in chosen_sections_indexes)
-    chosen_articles = f"Selected {len(chosen_sections)} document sections:".join(sections)
+    chosen_articles = f"Selected {len(chosen_sections)} document sections:\n".join(df['Article'][int(ind)] for ind in chosen_sections_indexes)
     
     # header = """Answer the question as truthfully as possible using the provided context and imagine yourself as a legal advice consultant. If you think user question is not complete and may need more context, please ask follow up questions to maintain the dialogue. \n\nContext:\n"""
     header = ''' Answer the question as truthfully as possible using the provided context: \n '''
-
-    return chosen_articles, header + "".join(chosen_sections) + "\n\n Q: " + question + "\n A:" 
+    prompt_corr = header + "".join(chosen_sections) + "\n\n Q: " + question + "\n A:" 
+    return chosen_articles, prompt_corr
 
 
 
@@ -142,7 +141,8 @@ def answer_query_with_context(
                 **COMPLETIONS_API_PARAMS
             )
 
-    return chosen_articles + "\n".join(response["choices"][0]["message"]['content'].strip(" \n"))
+    resp = response["choices"][0]["message"]['content'].strip(" \n")
+    return "According to the articles below:\n" + chosen_articles + "\n" + resp
 
 
 class Adlet:
