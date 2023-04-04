@@ -1,3 +1,4 @@
 constants
 models/__pycache__
 translator/__pycache__
+storage/__pycache__

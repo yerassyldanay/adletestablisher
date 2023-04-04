@@ -106,16 +106,17 @@ class AdletEstablisherBot(UserInfo):
     async def answer(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_info = self.get_user_info(update)
 
+        question = update.message.text
+        self.log(user_info, { "command": "answer", "type": "user_input", "question": question})
+
         # this data will be sent to another telegram bot
-        data_for_storage = user_info.copy().update({
+        data_for_storage = user_info.copy()
+        data_for_storage.update({
             "question": question,
             "lang": context.user_data["language"],
             "bot": "ADLET",
         })
         await self.storage.sendKeyValues(data_for_storage)
-
-        question = update.message.text
-        self.log(user_info, { "command": "answer", "type": "user_input", "question": question})
 
         # translate the message
         lang = context.user_data["language"]

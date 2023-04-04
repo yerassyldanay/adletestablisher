@@ -1,0 +1,8 @@
+version: '3'
+services:
+  adletestablsiher:
+    environment:
+      TZ: Asia/Almaty
+    build: 
+      context: .
+      dockerfile: adlet.Dockerfile
