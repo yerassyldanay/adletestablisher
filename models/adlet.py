@@ -109,10 +109,13 @@ def construct_prompt(question: str, context_embeddings: dict, df: pd.DataFrame) 
     print(f"Selected {len(chosen_sections)} document sections:")
     print("\n".join(df['Article'][int(ind)] for ind in chosen_sections_indexes))
     
+    sections = "\n".join(df['Article'][int(ind)] for ind in chosen_sections_indexes)
+    chosen_articles = f"Selected {len(chosen_sections)} document sections:".join(sections)
+    
     # header = """Answer the question as truthfully as possible using the provided context and imagine yourself as a legal advice consultant. If you think user question is not complete and may need more context, please ask follow up questions to maintain the dialogue. \n\nContext:\n"""
     header = ''' Answer the question as truthfully as possible using the provided context: \n '''
 
-    return header + "".join(chosen_sections) + "\n\n Q: " + question + "\n A:"
+    return chosen_articles, header + "".join(chosen_sections) + "\n\n Q: " + question + "\n A:" 
 
 
 
@@ -122,7 +125,7 @@ def answer_query_with_context(
     document_embeddings: dict[(str, str), np.array],
     show_prompt: bool = False
 ) -> str:
-    prompt = construct_prompt(
+    chosen_articles, prompt = construct_prompt(
         query,
         document_embeddings,
         df
@@ -139,7 +142,7 @@ def answer_query_with_context(
                 **COMPLETIONS_API_PARAMS
             )
 
-    return response["choices"][0]["message"]['content'].strip(" \n")
+    return chosen_articles + "\n".join(response["choices"][0]["message"]['content'].strip(" \n"))
 
 
 class Adlet:
