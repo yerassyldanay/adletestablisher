@@ -113,13 +113,13 @@ class AdletEstablisherBot(UserInfo):
         data_for_storage = user_info.copy()
         data_for_storage.update({
             "question": question,
-            "lang": context.user_data["language"],
+            "lang": context.user_data.get("language", KAZ),
             "bot": "ADLET",
         })
         await self.storage.sendKeyValues(data_for_storage)
 
         # translate the message
-        lang = context.user_data["language"]
+        lang = context.user_data.get("language", KAZ)
         question = await self.get_translator(lang, "en").wrapper(question)
         self.log(user_info, { "command": "answer", "type": "translator_1", "question": question})
 
